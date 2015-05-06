@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+        <record model="ir.ui.view" id="jeafea_account_voucher_inherit_fapiao">
+            <field name="name">voucher fapiao</field>
+            <field name="model">account.voucher</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="account_voucher.view_vendor_receipt_form"/>
+            <field name="arch" type="xml">
+                <xpath expr='//field[@name="partner_id"]' position='after'>
+                    <field name="fapiao_id"  widget="many2many_tags" />
+                </xpath>
+            </field>
+
+
+        </record>
+
+
+
+	</data>
+</openerp>
