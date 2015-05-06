@@ -22,6 +22,7 @@ class account_fapiao(models.Model):
     isrefund = fields.Boolean(string=u'开退票')
     original_name = fields.Many2one('account.fapiao',string=u'原始号码')
     paid = fields.Boolean(string=u'已回款')
+    paid_date= fields.Date(string=u'回款时间')
     state= fields.Selection([
         ('draft','Draft'),
         ('confirmed','Confirmed'),
@@ -94,9 +95,12 @@ class account_fapiao(models.Model):
                     #计算未开发票余额
                     print '455',amount_original
                     amount_unreconciled=self._compute_balance(line,amount_original)
+                    invoice_obj=self.env['account.invoice'].search([('move_id','=',line.move_id.id)])
+                    contact_partner_id = invoice_obj.partner_id
+                    invoice_id = invoice_obj.id
                     #不显示余额为0的明细
                     if amount_unreconciled !=0 :
-                        res.append({ 'move_line_id': line.id,'quantity':line.quantity, 'amount_original':amount_original,'amount_unreconciled':amount_unreconciled,'product_id':line.product_id })
+                        res.append({ 'move_line_id': line.id,'contact_partner_id':contact_partner_id,'invoice_id':invoice_id,'quantity':line.quantity, 'amount_original':amount_original,'amount_unreconciled':amount_unreconciled,'product_id':line.product_id })
             print '888',res
             self.fapiao_line_id = res
         print self.fapiao_line_id
@@ -137,8 +141,8 @@ class account_fapiao_line(models.Model):
 
 
     fapiao_id = fields.Many2one('account.fapiao')
-    move_line_id=fields.Many2one('account.move.line',string=u'销售明细')
-    partner_id =fields.Many2one('res.partner')
+    move_line_id=fields.Many2one('account.move.line',string=u'单号')
+    contact_partner_id =fields.Many2one('res.partner')
     move_id= fields.Many2one('account.move',related='move_line_id.move_id', store=True,readonly='True')
     invoice_id=fields.Many2one('account.invoice')
     product_id= fields.Many2one('product.product',string=u'产品')
@@ -169,7 +173,6 @@ class account_fapiao_line(models.Model):
         print '77',self.amount,amount_with_taxes
         self.fapiao_id=[{'amount_with_taxes':10}]
         print '88',self.fapiao_id
-
 
 
 

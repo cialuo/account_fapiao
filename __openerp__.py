@@ -23,7 +23,6 @@
     'data': [
         # 'account_invoice.xml',
         'fapiao_view.xml',
-        'account_voucher_inherit_fapiao.xml',
 
     ],
 
