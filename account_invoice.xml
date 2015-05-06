@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		<record model="ir.ui.view" id="jeafea_account_invoice_line_view">
+            <field name="name">jeafea_account_invoice_line_view</field>
+            <field name="model">account.invoice.line</field>
+            <field name="inherit_id" ref="account.view_invoice_line_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='price_subtotal']  " position="after">
+                    <field name="fapiao_number"/>
+                    <field name="fapiao_amount" sum="total fapiao amount"/>
+                    <field name="fapiao_date"/>
+                </xpath>
+                 <xpath expr="//field[@name='name']  " position="before">
+                     <field name="invoice_id"/>
+                     <field name="journal_id" />
+                    <field name="partner_id"/>
+
+                </xpath>
+                 <xpath expr="//field[@name='name']  " position="replace">
+                     <field name="product_id"/>
+
+                </xpath>
+                <xpath expr="//field[@name='account_id']  " position="replace">
+
+                </xpath>
+
+                <xpath expr="//field[@name='price_subtotal']  " position="replace">
+                    <field name="price_subtotal" sum="total price subtotal"/>
+                </xpath>
+
+
+
+            </field>
+        </record>
+
+
+        <record model="ir.ui.view" id="jeafea_account_invoice_line_form">
+            <field name="name">jeafea_account_invoice_line_form</field>
+            <field name="model">account.invoice.line</field>
+            <field name="inherit_id" ref="account.view_invoice_line_form"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//field[@name='discount'] " position="after">
+                    <group>
+                        <field name="fapiao_number" style="width: 100%%"/>
+                        <field name="fapiao_amount"/>
+                        <field name="fapiao_date"/>
+                    </group>
+                </xpath>
+                 <xpath expr="//field[@name='product_id']  " position="before">
+                     <field name="invoice_id" readonly="True"/>
+                     <field name="journal_id" />
+                    <field name="partner_id"/>
+
+                </xpath>
+                <xpath expr="//field[@name='discount']  " position="after">
+                    <field name="price_subtotal" />
+                </xpath>
+
+                <xpath expr="//field[@name='product_id']  " position="replace">
+                    <field name="product_id" on_change="product_id_change(product_id, uos_id, quantity, name, parent.type, parent.partner_id, parent.fiscal_position, price_unit, parent.currency_id, parent.company_id, context)" readonly="True"/>
+                </xpath>
+                <xpath expr="//field[@name='quantity']  " position="replace">
+                     <field name="quantity" class="oe_inline" readonly="True"/>
+                </xpath>
+                <xpath expr="//field[@name='uos_id']  " position="replace">
+                     <field name="uos_id" class="oe_inline" groups="product.group_uom" on_change="uos_id_change(product_id, uos_id, quantity, name, parent.type, parent.partner_id, parent.fiscal_position, price_unit, parent.currency_id, parent.company_id, context)" readonly="True"/>
+                </xpath>
+                <xpath expr="//field[@name='price_unit']  " position="replace">
+                     <field name="price_unit" readonly="True"/>
+
+                </xpath>
+                <xpath expr="//field[@name='discount']  " position="replace">
+                    <field name="discount" groups="sale.group_discount_per_so_line" readonly="True"/>
+                </xpath>
+                <xpath expr="//form[@string='Invoice Line']  " position="inside">
+                    <form create="false"/>
+                </xpath>
+            </field>
+        </record>
+
+
+
+        <record id="jeafea_action_account_invoice_line" model="ir.actions.act_window">
+            <field name="name">账单明细</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.invoice.line</field>
+            <field name="context">{'search_default_my_invoice_line_filter': 1}</field>
+            <field name="domain">[('invoice_id.state','not in',['paid']),'|',('invoice_id.type','=','out_invoice'),('invoice_id.type','=','out_refund')]</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+
+        <record id="jeafea_view_account_invoice_line_search" model="ir.ui.view">
+            <field name="name">account_invoice_line_search</field>
+            <field name="model">account.invoice.line</field>
+            <!--<filter domain="[('fapiao_number', '=', '0')]"/>-->
+            <field name="arch" type="xml">
+                <search >
+                    <field name="invoice_id" />
+                    <field name="partner_id" string="partner and number" filter_domain="['|', ('partner_id', 'ilike', self), ('fapiao_number', 'ilike', self)]"/>
+                    <field name="product_id"/>
+                    <field name="fapiao_number"/>
+                    <filter name="partner_id" string="1212"
+                            domain="[('partner_id', '=', 6)]" />
+                    <group string="Group By">
+                        <filter name="partner_id" string="partner"
+                                context="{'group_by': 'partner_id'}"/>
+                    </group>
+
+
+
+               </search>
+            </field>
+        </record>
+
+        <menuitem id="jeafea_menu_account_invoice_line" name="账单明细"  sequence="90" parent="account.menu_finance_receivables" action="jeafea_action_account_invoice_line" />
+
+        <!--扩展会计分录下面的发票号码字段,便于核销对账-->
+        <!--扩展付款页面下面的字段, 便于核销对账-->
+	</data>
+</openerp>
