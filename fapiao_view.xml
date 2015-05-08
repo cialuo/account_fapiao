@@ -5,13 +5,13 @@
             <field name="name">fapiao.tree</field>
             <field name="model">account.fapiao</field>
             <field name="arch" type="xml">
-                <tree >
+                <tree   default_order="name desc">
                     <field name="name"/>
                     <field name="category_id" string="发票抬头"/>
                     <field name="partner_id" />
                     <field name="fapiao_date" />
 
-                    <field name="amount_with_taxes" />
+                    <field name="amount_with_taxes" sum="total fapiao amount" />
                     <field name="paid"/>
                     <field name="state"/>
                 </tree>

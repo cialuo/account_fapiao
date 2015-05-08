@@ -14,7 +14,7 @@ class account_fapiao(models.Model):
 
     name=fields.Integer(string="Fapiao Number", required=True)
     fapiao_date=fields.Date(string="Fapiao Date", required=True,default=fields.Date.today)
-    category_id=fields.Many2one('res.partner.category',string=u'发票抬头')
+    category_id=fields.Many2one('res.partner.category',string=u'发票抬头',required=True)
     amount_with_taxes = fields.Float('Fapiao total amount', compute='_compute_amount_with_taxes')
     notes=fields.Text(string="Notes")
     partner_id=fields.Many2one('res.partner',string='Partner')
@@ -99,7 +99,8 @@ class account_fapiao(models.Model):
                     contact_partner_id = invoice_obj.partner_id
                     invoice_id = invoice_obj.id
                     #不显示余额为0的明细
-                    if amount_unreconciled !=0 :
+                    print 'amount_unreconciled',amount_unreconciled
+                    if int(amount_unreconciled) !=0 :
                         res.append({ 'move_line_id': line.id,'contact_partner_id':contact_partner_id,'invoice_id':invoice_id,'quantity':line.quantity, 'amount_original':amount_original,'amount_unreconciled':amount_unreconciled,'product_id':line.product_id })
             print '888',res
             self.fapiao_line_id = res
