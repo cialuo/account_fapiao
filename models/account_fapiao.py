@@ -69,7 +69,7 @@ class account_fapiao(models.Model):
             return amount_unreconciled
 
 
-    @api.multi
+    @api.one
     @api.onchange('partner_id')
     def onchange_partner_id(self):
 
@@ -123,15 +123,15 @@ class account_fapiao(models.Model):
 
 
 
-    @api.multi
+    @api.one
     def fapiao_confirmed(self):
         return self.write({'state': 'confirmed'})
 
-    @api.multi
+    @api.one
     def fapiao_cancel(self):
         return self.write({'state':'cancel'})
 
-    @api.multi
+    @api.one
     def fapiao_refunded(self):
         return self.write({'state':'refunded'})
 
@@ -165,7 +165,7 @@ class account_fapiao_line(models.Model):
     #     if self.move_line_id:
     #         self.quantity = self.move_line_id.quantity
 
-    @api.multi
+    @api.one
     @api.onchange('amount')
     def onchange_amount(self):
         amount_with_taxes = 0.00
